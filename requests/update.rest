@@ -1,0 +1,7 @@
+PUT http://localhost:3001/api/notes/61f3c5e340e535063a99c45c
+Content-Type: application/json
+
+{
+    "content": "Garvard",
+    "important": false  
+}

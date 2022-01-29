@@ -1,10 +1,3 @@
-// this is a new index file
-// the old one been archived at ./archive/old_index_file
-// old code was based on a local database. 
-// this file is connected to a mongoDB database using mongoose
-// currently creating a note through frontend works but put/delete only works through a request via rest/postman
-
-// importing dependencies
 require('dotenv').config()
 const express = require('express');
 const cors = require('cors')
@@ -26,14 +19,55 @@ const requestLogger = (req, res, next) => {
 
 app.use(requestLogger)
 
-// gets all the notes
+// // old way - now our application is using mongoose instead of this object below
+// let notes = [
+//     {
+//         content: "jonizdan",
+//         date: "2022-01-28T04:42:10.427Z",
+//         important: false,
+//         id: 1
+//     },
+//     {
+//         content: "salom",
+//         date: "2022-01-28T04:42:13.011Z",
+//         important: false,
+//         id: 2
+//     },
+//     {
+//         content: "beriiiiing",
+//         date: "2022-01-28T04:42:16.356Z",
+//         important: false,
+//         id: 3
+//     },
+//     {
+//         content: "qales",
+//         date: "2022-01-28T04:43:29.599Z",
+//         important: false,
+//         id: 4
+//     }
+// ]
+
+// const generateid = () => {
+//     const maxid = notes.length > 0 ? Math.max(...notes.map(n=>n.id)) : 0
+//     return maxid + 1
+// }
+
+app.get('/', (req, res) => {
+    res.send(`home page madafako`)
+})
+
+// // old way of retreiving data in the backend
+// app.get('/api/notes', (req, res) => {
+//     res.json(notes)
+// })
+
+// new way - mongoose
 app.get('/api/notes', (req, res) => {
     Note.find({}).then(notes => {
         res.json(notes)
     })
 })
 
-// gets individual notes with an id
 app.get('/api/notes/:id', (req, res) => {
     Note.findById(req.params.id)
     .then(note => {
@@ -49,7 +83,14 @@ app.get('/api/notes/:id', (req, res) => {
     })
 })
 
-// deletes a note
+// old code
+// app.delete('/api/notes/:id', (req, res) => {
+//     const id = Number(req.params.id)
+//     notes = notes.filter(note => note.id !== id)
+//     res.status(204).end()
+// })
+
+// new code
 app.delete('/api/notes/:id', (req, res, next) => {
     Note.findByIdAndRemove(req.params.id).then(result => {
         res.status(204).end()
@@ -57,8 +98,8 @@ app.delete('/api/notes/:id', (req, res, next) => {
     .catch(error => next(error))
 })
 
-// creating a new note
-app.post('/api/notes', (req, res, next) => {
+
+app.post('/api/notes', (req, res) => {
     const body = req.body
     
     if(body.content === undefined){
@@ -70,14 +111,12 @@ app.post('/api/notes', (req, res, next) => {
         date: new Date(),
         important: false,
     })
-    note.save()
-        .then(savedNote => {
-            res.json(savedNote)
-        })
-        .catch(error => next(error))
+    note.save().then(savedNote => {
+        res.json(savedNote)
+    })
 })
 
-// updating a note with an id
+// new code to update the note
 app.put('/api/notes/:id', (req, res, next) => {
     const body = req.body
 
@@ -93,26 +132,12 @@ app.put('/api/notes/:id', (req, res, next) => {
         .catch(error => next(error))
 })
 
-// middleware
 const unknownEndpoint = (req, res) => {
     res.status(404).send({error: 'unknown endpoint'})
 }
 
 app.use(unknownEndpoint)
 
-const errorHandler = (error, req, res, next) => {
-    console.error(error.message);
-
-    if(error.name === 'CastError'){
-        return res.status(400).send({error: 'malformatted id'})
-    } else if(error.name === 'ValidationError'){
-        return res.status(400).send({error: error.message})
-    }
-
-    next(error)
-}
-
-// port configuration
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`server running at ${PORT}`);
