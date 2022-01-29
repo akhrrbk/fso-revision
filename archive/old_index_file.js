@@ -1,5 +1,5 @@
 require('dotenv').config()
-const express = require('express');
+const express = require('express')
 const cors = require('cors')
 const Note = require('./models/note')
 const mongoose = require('mongoose')
@@ -10,10 +10,10 @@ app.use(cors())
 app.use(express.static('build'))
 
 const requestLogger = (req, res, next) => {
-    console.log('Method:', req.method);
-    console.log('Path:', req.path);
-    console.log('Body:', req.body);
-    console.log('---');
+    console.log('Method:', req.method)
+    console.log('Path:', req.path)
+    console.log('Body:', req.body)
+    console.log('---')
     next()
 }
 
@@ -53,7 +53,7 @@ app.use(requestLogger)
 // }
 
 app.get('/', (req, res) => {
-    res.send(`home page madafako`)
+    res.send('home page madafako')
 })
 
 // // old way of retreiving data in the backend
@@ -70,17 +70,17 @@ app.get('/api/notes', (req, res) => {
 
 app.get('/api/notes/:id', (req, res) => {
     Note.findById(req.params.id)
-    .then(note => {
-        if(note){
-            res.json(note)
-        } else {
-            res.status(404).end()
-        }
-    })
-    .catch((error) => {
-        console.log(error);
-        res.status(400).send({error: "malformatted id"})
-    })
+        .then(note => {
+            if(note){
+                res.json(note)
+            } else {
+                res.status(404).end()
+            }
+        })
+        .catch((error) => {
+            console.log(error)
+            res.status(400).send({ error: 'malformatted id' })
+        })
 })
 
 // old code
@@ -95,17 +95,17 @@ app.delete('/api/notes/:id', (req, res, next) => {
     Note.findByIdAndRemove(req.params.id).then(result => {
         res.status(204).end()
     })
-    .catch(error => next(error))
+        .catch(error => next(error))
 })
 
 
 app.post('/api/notes', (req, res) => {
     const body = req.body
-    
+
     if(body.content === undefined){
-        return res.status(400).json({error: 'content missing'})
+        return res.status(400).json({ error: 'content missing' })
     }
-    
+
     const note = new Note({
         content: body.content,
         date: new Date(),
@@ -125,7 +125,7 @@ app.put('/api/notes/:id', (req, res, next) => {
         important: body.important
     }
 
-    Note.findByIdAndUpdate(req.params.id, note, {new: true})
+    Note.findByIdAndUpdate(req.params.id, note, { new: true })
         .then(updatedNote => {
             res.json(updatedNote)
         })
@@ -133,12 +133,12 @@ app.put('/api/notes/:id', (req, res, next) => {
 })
 
 const unknownEndpoint = (req, res) => {
-    res.status(404).send({error: 'unknown endpoint'})
+    res.status(404).send({ error: 'unknown endpoint' })
 }
 
 app.use(unknownEndpoint)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
-    console.log(`server running at ${PORT}`);
+    console.log(`server running at ${PORT}`)
 })
