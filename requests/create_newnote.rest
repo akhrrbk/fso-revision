@@ -1,7 +1,7 @@
 post http://localhost:3001/api/notes/
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFraHJyYmsiLCJpZCI6IjYxZmEzODM2OGY3ZjYwODVjODZmNTUxZSIsImlhdCI6MTY0Mzc5NzQ1MX0.QF1xKt--KZ19jVv3hng-_qYluilAD4svSknitBcF_Xg
 
 {
-    "content": "this is a second note with an ID",
-    "userid": "61fa38368f7f6085c86f551e"
+    "content": "this is the next note with a unique token"
 }
